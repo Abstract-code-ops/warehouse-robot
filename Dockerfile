@@ -46,11 +46,12 @@ WORKDIR /ros2_ws/src
 # Use the full URL and tell git not to prompt for credentials
 #RUN git clone --depth 1 -b ros2 https://github.com/iralabdisco/ira_laser_tools.git
 # just incase there are hidden system libraries to install we do this
+
+WORKDIR /ros2_ws
+
 RUN . /opt/ros/humble/setup.sh && \
     rosdep update && \
     rosdep install --from-paths src --ignore-src -y
-
-WORKDIR /ros2_ws
 
 # ── Environment sourcing ─────────────────────────────────────
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
