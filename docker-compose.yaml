@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  cognitive_amr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cognitive_amr:humble
+    container_name: cognitive_amr_dev
+
+    # Share host network for ROS 2 DDS discovery
+    network_mode: host
+
+    # GPU passthrough (for future use — remove if CPU-only)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - ROS_DOMAIN_ID=42
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+    volumes:
+      # Mount your workspace source into the container
+      - ./ros2_ws/src:/ros2_ws/src
+      # Persist build artifacts
+      - amr_build_cache:/ros2_ws/build
+      - amr_install_cache:/ros2_ws/install
+      # X11 for GUI (if running locally)
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Environment secrets
+      - ./.env:/ros2_ws/.env:ro
+
+    stdin_open: true
+    tty: true
+
+    # Health check: verify ROS 2 is functional
+    healthcheck:
+      test: ["CMD", "bash", "-c", "source /opt/ros/humble/setup.bash && ros2 topic list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  amr_build_cache:
+  amr_install_cache:
