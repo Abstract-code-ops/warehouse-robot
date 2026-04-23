@@ -44,7 +44,7 @@ WORKDIR /ros2_ws/src
 # downloading from sudo apt does not work for some reason
 # Using the -b flag ensures you get the correct ROS 2 branch
 # Use the full URL and tell git not to prompt for credentials
-RUN git clone --depth 1 -b ros2 https://github.com/iralabdiskret/ira_laser_tools.git
+RUN git clone --depth 1 -b ros2 https://github.com/iralabdisco/ira_laser_tools.git
 # just incase there are hidden system libraries to install we do this
 RUN . /opt/ros/humble/setup.sh && \
     rosdep update && \
