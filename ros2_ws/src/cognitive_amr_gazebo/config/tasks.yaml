@@ -1,0 +1,257 @@
+# Demo task queue — 24 tasks for AI scheduler showcase
+# Fields:
+#   id          : unique task ID
+#   type        : pick | transfer | replenishment | charge
+#   priority    : 1 (highest / rush) → 3 (low / background)
+#   sku         : item identifier (for display)
+#   source      : waypoint name (where robot goes to pick)
+#   destination : waypoint name (where robot delivers)
+#   deadline_s  : seconds from demo start before SLA breach (shown on UI)
+#   weight_kg   : payload weight (used in battery cost estimate)
+#   notes       : shown by LLM supervisor when explaining the decision
+
+tasks:
+
+  # ── RUSH ORDERS (priority 1, tight deadlines) ─────────────────
+  - id: T001
+    type: pick
+    priority: 1
+    sku: SKU-A17
+    source: shelf_A3
+    destination: picking_station_1
+    deadline_s: 120
+    weight_kg: 2.1
+    notes: "Express shipment — customer SLA breach in 2 min. Must go first."
+
+  - id: T002
+    type: pick
+    priority: 1
+    sku: SKU-B04
+    source: shelf_B1
+    destination: dispatch_zone
+    deadline_s: 180
+    weight_kg: 3.5
+    notes: "Cold-chain item. Direct to dispatch — skip packing station."
+
+  - id: T003
+    type: pick
+    priority: 1
+    sku: SKU-A22
+    source: shelf_A1
+    destination: picking_station_2
+    deadline_s: 240
+    weight_kg: 1.8
+    notes: "Rush order — aisle A1 is clear, low travel cost."
+
+  - id: T004
+    type: pick
+    priority: 1
+    sku: SKU-B09
+    source: priority_bin
+    destination: dispatch_zone
+    deadline_s: 300
+    weight_kg: 4.2
+    notes: "Priority bin pickup — pre-staged for fast dispatch."
+
+  - id: T005
+    type: pick
+    priority: 1
+    sku: SKU-A31
+    source: shelf_A5
+    destination: picking_station_1
+    deadline_s: 360
+    weight_kg: 2.7
+    notes: "High-value item. Route avoids congested center aisle."
+
+  - id: T006
+    type: pick
+    priority: 1
+    sku: SKU-B12
+    source: shelf_B3
+    destination: dispatch_zone
+    deadline_s: 420
+    weight_kg: 1.5
+    notes: "Rush — B-row aisle. Scheduled after T005 to avoid congestion."
+
+  # ── STANDARD PICKS (priority 2, normal SLA) ────────────────────
+  - id: T007
+    type: pick
+    priority: 2
+    sku: SKU-A08
+    source: shelf_A2
+    destination: picking_station_2
+    deadline_s: 600
+    weight_kg: 2.0
+    notes: "Standard pick. Batched with T008 — same destination zone."
+
+  - id: T008
+    type: pick
+    priority: 2
+    sku: SKU-A14
+    source: shelf_A4
+    destination: picking_station_2
+    deadline_s: 660
+    weight_kg: 2.3
+    notes: "Batched with T007. Robot continues from A2 to A4 — efficient path."
+
+  - id: T009
+    type: pick
+    priority: 2
+    sku: SKU-B07
+    source: shelf_B4
+    destination: picking_station_1
+    deadline_s: 720
+    weight_kg: 3.1
+    notes: "Standard. Robot selects B4 over B2 — B2 aisle temporarily blocked."
+
+  - id: T010
+    type: pick
+    priority: 2
+    sku: SKU-B11
+    source: shelf_B5
+    destination: dispatch_zone
+    deadline_s: 780
+    weight_kg: 1.9
+    notes: "Standard pick to dispatch — no packing needed."
+
+  - id: T011
+    type: pick
+    priority: 2
+    sku: SKU-A19
+    source: shelf_A6
+    destination: picking_station_1
+    deadline_s: 840
+    weight_kg: 2.5
+    notes: "Far shelf pick. AI defers until rush queue clears."
+
+  - id: T012
+    type: pick
+    priority: 2
+    sku: SKU-B02
+    source: shelf_B2
+    destination: picking_station_2
+    deadline_s: 900
+    weight_kg: 1.2
+    notes: "Short route. Inserted opportunistically during robot idle moment."
+
+  - id: T013
+    type: pick
+    priority: 2
+    sku: SKU-A26
+    source: shelf_A3
+    destination: dispatch_zone
+    deadline_s: 960
+    weight_kg: 3.8
+    notes: "Second pick from A3 — same shelf as T001, different SKU."
+
+  - id: T014
+    type: pick
+    priority: 2
+    sku: SKU-B06
+    source: shelf_B6
+    destination: picking_station_1
+    deadline_s: 1020
+    weight_kg: 2.0
+    notes: "Furthest B-row shelf. AI delays until battery confirms safe round trip."
+
+  - id: T015
+    type: pick
+    priority: 2
+    sku: SKU-A03
+    source: shelf_A1
+    destination: picking_station_2
+    deadline_s: 1080
+    weight_kg: 1.6
+    notes: "Low congestion window — direct route along west aisle."
+
+  - id: T016
+    type: pick
+    priority: 2
+    sku: SKU-B15
+    source: shelf_B1
+    destination: dispatch_zone
+    deadline_s: 1140
+    weight_kg: 2.9
+    notes: "Standard. AI batches return trip with T017 transfer."
+
+  # ── TRANSFERS (priority 2–3, inbound→storage) ──────────────────
+  - id: T017
+    type: transfer
+    priority: 2
+    sku: PALLET-IN-03
+    source: dispatch_zone
+    destination: shelf_A2
+    deadline_s: 1200
+    weight_kg: 8.0
+    notes: "Inbound pallet restocking shelf A2. Heavy — battery impact factored."
+
+  - id: T018
+    type: transfer
+    priority: 3
+    sku: PALLET-IN-07
+    source: dispatch_zone
+    destination: shelf_B4
+    deadline_s: 1500
+    weight_kg: 9.5
+    notes: "Low priority restock. Deferred until all rush orders complete."
+
+  - id: T019
+    type: transfer
+    priority: 2
+    sku: TOTE-RET-11
+    source: picking_station_1
+    destination: shelf_A5
+    deadline_s: 1260
+    weight_kg: 3.2
+    notes: "Return tote from packing — must clear station before next wave."
+
+  - id: T020
+    type: transfer
+    priority: 3
+    sku: TOTE-RET-14
+    source: picking_station_2
+    destination: shelf_B3
+    deadline_s: 1800
+    weight_kg: 2.8
+    notes: "Low priority return. Scheduled in gap between task waves."
+
+  - id: T021
+    type: transfer
+    priority: 3
+    sku: PALLET-IN-09
+    source: robot_home
+    destination: shelf_B6
+    deadline_s: 2400
+    weight_kg: 11.0
+    notes: "Background restock — heavy payload, far route. Only when battery > 60%."
+
+  - id: T022
+    type: transfer
+    priority: 3
+    sku: TOTE-RET-18
+    source: picking_station_1
+    destination: shelf_A6
+    deadline_s: 2100
+    weight_kg: 2.1
+    notes: "Return tote. Bundled as return leg of another mission."
+
+  # ── CHARGE TASKS (policy-generated, not user-assigned) ─────────
+  - id: T023
+    type: charge
+    priority: 2
+    sku: CHARGE
+    source: robot_home
+    destination: charging_dock_1
+    deadline_s: 0   # immediate when triggered by battery policy
+    weight_kg: 0.0
+    notes: "Battery at 28%. AI inserts charge task — dock 1 free. Estimated 8 min top-up."
+
+  - id: T024
+    type: charge
+    priority: 2
+    sku: CHARGE
+    source: robot_home
+    destination: charging_dock_2
+    deadline_s: 0
+    weight_kg: 0.0
+    notes: "Dock 1 occupied. AI routes to dock 2. Prevents stranded robot mid-mission."

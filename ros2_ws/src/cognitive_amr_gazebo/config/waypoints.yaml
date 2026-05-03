@@ -1,0 +1,139 @@
+# Warehouse waypoints — coordinates match tugbot_style_ai_warehouse.sdf
+# All poses are in the map frame (meters). Yaw in radians.
+# frame_id: map
+
+waypoints:
+
+  # ── Charging docks ──────────────────────────────────────────
+  charging_dock_1:
+    x: -9.3
+    y: -6.5
+    yaw: 0.0
+    zone: charging
+
+  charging_dock_2:
+    x: -9.3
+    y: -4.8
+    yaw: 0.0
+    zone: charging
+
+  # ── Picking / packing stations ───────────────────────────────
+  picking_station_1:
+    x: -7.2
+    y: 5.7
+    yaw: 1.5708   # facing east (+x), toward the shelf aisles
+    zone: packing
+
+  picking_station_2:
+    x: -7.2
+    y: 2.7
+    yaw: 1.5708
+    zone: packing
+
+  # ── Shelf pick locations (robot stops in front of shelf face) ─
+  # A-row shelves (left side, x ≈ -5.9, facing +x toward aisle)
+  shelf_A1:
+    x: -5.9
+    y: -5.5
+    yaw: 1.5708
+    zone: storage
+    label: "Row A – Shelf 1"
+
+  shelf_A2:
+    x: -5.9
+    y: -3.5
+    yaw: 1.5708
+    zone: storage
+    label: "Row A – Shelf 2"
+
+  shelf_A3:
+    x: -5.9
+    y: -1.5
+    yaw: 1.5708
+    zone: storage
+    label: "Row A – Shelf 3"
+
+  shelf_A4:
+    x: -5.9
+    y: 0.5
+    yaw: 1.5708
+    zone: storage
+    label: "Row A – Shelf 4"
+
+  shelf_A5:
+    x: -5.9
+    y: 2.5
+    yaw: 1.5708
+    zone: storage
+    label: "Row A – Shelf 5"
+
+  shelf_A6:
+    x: -5.9
+    y: 4.5
+    yaw: 1.5708
+    zone: storage
+    label: "Row A – Shelf 6"
+
+  # B-row shelves (right side, x ≈ 5.9, facing -x toward aisle)
+  shelf_B1:
+    x: 5.9
+    y: -5.5
+    yaw: -1.5708
+    zone: storage
+    label: "Row B – Shelf 1"
+
+  shelf_B2:
+    x: 5.9
+    y: -3.5
+    yaw: -1.5708
+    zone: storage
+    label: "Row B – Shelf 2"
+
+  shelf_B3:
+    x: 5.9
+    y: -1.5
+    yaw: -1.5708
+    zone: storage
+    label: "Row B – Shelf 3"
+
+  shelf_B4:
+    x: 5.9
+    y: 0.5
+    yaw: -1.5708
+    zone: storage
+    label: "Row B – Shelf 4"
+
+  shelf_B5:
+    x: 5.9
+    y: 2.5
+    yaw: -1.5708
+    zone: storage
+    label: "Row B – Shelf 5"
+
+  shelf_B6:
+    x: 5.9
+    y: 4.5
+    yaw: -1.5708
+    zone: storage
+    label: "Row B – Shelf 6"
+
+  # ── Dispatch / outbound ───────────────────────────────────────
+  dispatch_zone:
+    x: 8.6
+    y: -6.4
+    yaw: 3.1416   # facing west (back toward shelves)
+    zone: dispatch
+
+  # ── Priority order bin ────────────────────────────────────────
+  priority_bin:
+    x: 8.6
+    y: 5.9
+    yaw: 3.1416
+    zone: priority
+
+  # ── Robot home / staging ──────────────────────────────────────
+  robot_home:
+    x: -9.0
+    y: -7.5
+    yaw: 0.0
+    zone: staging

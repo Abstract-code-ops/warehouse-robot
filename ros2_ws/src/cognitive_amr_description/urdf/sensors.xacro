@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ══════════════════════════════════
+       DUAL LiDAR SENSOR MACRO
+       Each LiDAR covers 270° — together
+       they provide full 360° coverage.
+       ══════════════════════════════════ -->
+  <xacro:macro name="lidar_sensor" params="name x y z roll pitch yaw">
+
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <cylinder radius="0.04" length="0.06"/>
+        </geometry>
+        <material name="lidar_blue"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.04" length="0.06"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.2"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0"
+                 iyy="0.0001" iyz="0" izz="0.0001"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child  link="${name}_link"/>
+      <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}"/>
+    </joint>
+
+    <!-- Gazebo LiDAR plugin -->
+    <gazebo reference="${name}_link">
+      <sensor name="${name}" type="ray">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>15</update_rate>   <!-- 15Hz saves CPU -->
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>540</samples>          <!-- 0.5° resolution -->
+              <resolution>1</resolution>
+              <min_angle>${-3*pi/4}</min_angle>  <!-- -135° = 270° arc -->
+              <max_angle>${3*pi/4}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.10</min>
+            <max>20.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="${name}_plugin"
+                filename="libgazebo_ros_ray_sensor.so">
+          <ros>
+            <remapping>~/out:=/scan/${name}</remapping>
+          </ros>
+          <output_type>sensor_msgs/LaserScan</output_type>
+          <frame_name>${name}_link</frame_name>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+
+  <!-- ══════════════════════════════════
+       FRONT CAMERA MACRO
+       ══════════════════════════════════ -->
+  <xacro:macro name="camera_sensor">
+
+    <link name="camera_link">
+      <visual>
+        <geometry>
+          <box size="0.04 0.08 0.04"/>
+        </geometry>
+        <material name="orange"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.04 0.08 0.04"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0"
+                 iyy="0.0001" iyz="0" izz="0.0001"/>
+      </inertial>
+    </link>
+
+    <!-- Camera frame for ROS conventions (Z forward, X right) -->
+    <link name="camera_optical_link"/>
+
+    <joint name="camera_joint" type="fixed">
+      <parent link="base_link"/>
+      <child  link="camera_link"/>
+      <!-- Mounted at front-center of chassis -->
+      <origin xyz="${robot_length/2 - 0.02} 0 ${robot_height/2 - 0.05}" rpy="0 0.15 0"/>
+    </joint>
+
+    <joint name="camera_optical_joint" type="fixed">
+      <parent link="camera_link"/>
+      <child  link="camera_optical_link"/>
+      <!-- ROS optical convention: rotate from standard to camera frame -->
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- Gazebo camera plugin -->
+    <gazebo reference="camera_link">
+      <sensor name="front_camera" type="camera">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>10</update_rate>   <!-- 10fps — sufficient for AI inference -->
+        <camera>
+          <horizontal_fov>1.3962634</horizontal_fov>  <!-- ~80° -->
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>30.0</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <plugin name="camera_plugin"
+                filename="libgazebo_ros_camera.so">
+          <ros>
+            <remapping>image_raw:=/camera/image_raw</remapping>
+            <remapping>camera_info:=/camera/camera_info</remapping>
+          </ros>
+          <camera_name>front_camera</camera_name>
+          <frame_name>camera_optical_link</frame_name>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

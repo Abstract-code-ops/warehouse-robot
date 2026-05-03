@@ -1,0 +1,228 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="base_link">
+
+  <!-- ── Properties (inherited from top-level xacro) ── -->
+  <!-- robot_length=0.85, robot_width=0.65, robot_height=0.25 -->
+  <!-- drive_wheel_radius=0.075 -->
+
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child  link="base_link"/>
+    <!-- Lift by exactly one wheel radius so wheels touch ground -->
+    <origin xyz="0 0 ${drive_wheel_radius + robot_height/2}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ══ CHASSIS ══════════════════════════════════════════ -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${robot_length} ${robot_width} ${robot_height}"/>
+      </geometry>
+      <material name="robot_blue">
+        <color rgba="0.53 0.81 0.98 1.0"/>  <!-- CAD blue color -->
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.85 0.65 0.25"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="45.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="0.8526" ixy="0" ixz="0"
+        iyy="1.3729" iyz="0"
+        izz="1.9453"/>
+    </inertial>
+  </link>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/SkyBlue</material>
+  </gazebo>
+
+  <!-- ══ FRONT-LEFT LiDAR ════════════════════════════════ -->
+  <!-- Positioned at top front-left corner of chassis -->
+  <link name="lidar_front_left_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- Cylinder standing upright like your CAD -->
+        <cylinder radius="0.04" length="0.07"/>
+      </geometry>
+      <material name="lidar_dark">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.04" length="0.07"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.2"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0"
+               iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <joint name="lidar_front_left_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="lidar_front_left_link"/>
+    <!-- top surface of chassis = +0.125m, then half cylinder height -->
+    <origin xyz="0.34 0.24 0.16" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="lidar_front_left_link">
+    <material>Gazebo/Black</material>
+    <sensor name="lidar_front_left" type="ray">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>15</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>540</samples>
+            <resolution>1</resolution>
+            <min_angle>${-3*pi/4}</min_angle>
+            <max_angle>${3*pi/4}</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min><max>20.0</max><resolution>0.01</resolution>
+        </range>
+        <noise><type>gaussian</type><mean>0.0</mean><stddev>0.01</stddev></noise>
+      </ray>
+      <plugin name="lidar_fl_plugin" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=/scan/lidar_front_left</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>lidar_front_left_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ══ BACK-RIGHT LiDAR ════════════════════════════════ -->
+  <!-- Rotated 180° to cover the opposite arc -->
+  <link name="lidar_back_right_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.04" length="0.07"/>
+      </geometry>
+      <material name="lidar_dark"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.04" length="0.07"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.2"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0"
+               iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <joint name="lidar_back_right_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="lidar_back_right_link"/>
+    <!-- Back-right corner, same height, yaw=pi faces opposite direction -->
+    <origin xyz="-0.34 -0.24 0.16" rpy="0 0 ${pi}"/>
+  </joint>
+
+  <gazebo reference="lidar_back_right_link">
+    <material>Gazebo/Black</material>
+    <sensor name="lidar_back_right" type="ray">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>15</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>540</samples>
+            <resolution>1</resolution>
+            <min_angle>${-3*pi/4}</min_angle>
+            <max_angle>${3*pi/4}</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min><max>20.0</max><resolution>0.01</resolution>
+        </range>
+        <noise><type>gaussian</type><mean>0.0</mean><stddev>0.01</stddev></noise>
+      </ray>
+      <plugin name="lidar_br_plugin" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=/scan/lidar_back_right</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>lidar_back_right_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ══ FRONT CAMERA ════════════════════════════════════ -->
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- Small box mounted flush on front face -->
+        <box size="0.04 0.08 0.04"/>
+      </geometry>
+      <material name="camera_orange">
+        <color rgba="1.0 0.5 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry><box size="0.04 0.08 0.04"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0"
+               iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <link name="camera_optical_link"/>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="camera_link"/>
+    <!-- Front face center, slightly above midline -->
+    <origin xyz="0.425 0.0 0.04" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child  link="camera_optical_link"/>
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+  </joint>
+
+  <gazebo reference="camera_link">
+    <material>Gazebo/Orange</material>
+    <sensor name="front_camera" type="camera">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <camera>
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>640</width><height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip><near>0.05</near><far>30.0</far></clip>
+      </camera>
+      <plugin name="camera_plugin" filename="libgazebo_ros_camera.so">
+        <ros>
+          <remapping>image_raw:=/camera/image_raw</remapping>
+          <remapping>camera_info:=/camera/camera_info</remapping>
+        </ros>
+        <frame_name>camera_optical_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</xacro:macro>
+</robot>
