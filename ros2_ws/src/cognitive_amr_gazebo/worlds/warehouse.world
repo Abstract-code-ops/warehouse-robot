@@ -1,0 +1,223 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="warehouse">
+
+    <!-- Physics engine tuning for stable simulation -->
+    <physics name="default_physics" default="true" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>50</iters>
+          <sor>1.3</sor>
+        </solver>
+      </ode>
+    </physics>
+
+    <!-- Lighting -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- Ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- ── Warehouse walls ── -->
+    <!-- North wall -->
+    <model name="wall_north">
+      <static>true</static>
+      <pose>0 10 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>20 0.2 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>20 0.2 3</size></box></geometry>
+          <material>
+            <script><uri>file://media/materials/scripts/gazebo.material</uri>
+                    <name>Gazebo/Grey</name></script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- South wall -->
+    <model name="wall_south">
+      <static>true</static>
+      <pose>0 -10 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>20 0.2 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>20 0.2 3</size></box></geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- East wall -->
+    <model name="wall_east">
+      <static>true</static>
+      <pose>10 0 1.5 0 0 1.5708</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>20 0.2 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>20 0.2 3</size></box></geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- West wall -->
+    <model name="wall_west">
+      <static>true</static>
+      <pose>-10 0 1.5 0 0 1.5708</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>20 0.2 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>20 0.2 3</size></box></geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Warehouse shelving aisles ── -->
+    <!-- Aisle 1 — Left shelf unit -->
+    <model name="shelf_1L">
+      <static>true</static>
+      <pose>-6 0 0.75 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.4 8 1.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.4 8 1.5</size></box></geometry>
+          <material>
+            <script><name>Gazebo/WoodFloor</name></script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Aisle 1 — Right shelf unit -->
+    <model name="shelf_1R">
+      <static>true</static>
+      <pose>-3 0 0.75 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.4 8 1.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.4 8 1.5</size></box></geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Repeat pattern for Aisle 2 -->
+    <model name="shelf_2L">
+      <static>true</static>
+      <pose>1 0 0.75 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.4 8 1.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.4 8 1.5</size></box></geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="shelf_2R">
+      <static>true</static>
+      <pose>4 0 0.75 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.4 8 1.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.4 8 1.5</size></box></geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Simulated hazards (static props) ── -->
+    <!-- Fallen box — represents anomaly for YOLO to detect -->
+    <model name="fallen_box_aisle1">
+      <static>true</static>
+      <pose>-4.5 2 0.15 0.3 0.2 0.5</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.4 0.3 0.3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.4 0.3 0.3</size></box></geometry>
+          <material>
+            <ambient>0.7 0.5 0.2 1</ambient>
+            <diffuse>0.7 0.5 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Spill simulation — flat yellow disc -->
+    <model name="spill_aisle2">
+      <static>true</static>
+      <pose>2.5 -3 0.001 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.5</radius><length>0.002</length></cylinder></geometry>
+          <material>
+            <ambient>0.9 0.8 0.0 0.8</ambient>
+            <diffuse>0.9 0.8 0.0 0.8</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Picking station ── -->
+    <model name="pick_station">
+      <static>true</static>
+      <pose>8 0 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.5 2.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.5 2.0 1.0</size></box></geometry>
+          <material>
+            <ambient>0.2 0.5 0.9 1</ambient>
+            <diffuse>0.2 0.5 0.9 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Dynamic obstacle: moving human worker ── -->
+    <!-- We'll control this programmatically via a ROS 2 node -->
+    <model name="dynamic_actor">
+      <pose>0 5 1.0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>0.3</radius><length>1.8</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.3</radius><length>1.8</length></cylinder></geometry>
+          <material>
+            <ambient>0.9 0.2 0.2 1</ambient>
+          </material>
+        </visual>
+        <inertial>
+          <mass>70</mass>
+          <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="0.5"/>
+        </inertial>
+      </link>
+    </model>
+
+  </world>
+</sdf>

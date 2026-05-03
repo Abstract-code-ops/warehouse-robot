@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     python3-colcon-common-extensions \
     python3-rosdep \
+    ros-humble-rmw-cyclonedds-cpp \
     python3-vcstool \
     ros-humble-navigation2 \
     ros-humble-nav2-bringup \
