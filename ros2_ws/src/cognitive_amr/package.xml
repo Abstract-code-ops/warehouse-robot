@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+    <name>cognitive_amr</name>
+    <version>0.0.0</version>
+    <description>Cognitive AMR Semantic Planner</description>
+    <maintainer email="aa2933395@gmail.com">sicheen</maintainer>
+    <license>Apache 2.0</license>
+
+    <buildtool_depend>ament_cmake</buildtool_depend>
+    <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+    <!-- Runtime: ROS 2 Python client library -->
+    <exec_depend>rclpy</exec_depend>
+
+    <!-- Runtime: message types we publish/receive -->
+    <exec_depend>std_msgs</exec_depend>
+    <exec_depend>geometry_msgs</exec_depend>
+    <exec_depend>sensor_msgs</exec_depend>
+    <exec_depend>visualization_msgs</exec_depend>
+    <exec_depend>nav2_msgs</exec_depend>
+    <exec_depend>nav2_simple_commander</exec_depend>
+
+    <!-- Runtime: action client + TF support -->
+    <exec_depend>action_msgs</exec_depend>
+    <exec_depend>tf2_ros</exec_depend>
+    <exec_depend>tf2_geometry_msgs</exec_depend>
+
+    <export>
+        <build_type>ament_python</build_type>
+    </export>
+</package>

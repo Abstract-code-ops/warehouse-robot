@@ -1,0 +1,15 @@
+{
+  "name": "cognitive_amr",
+  "dockerComposeFile": "../docker-compose.yaml",
+  "service": "cognitive_amr",
+  "workspaceFolder": "/ros2_ws",
+  "shutdownAction": "none",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-iot.vscode-ros"
+      ]
+    }
+  }
+}

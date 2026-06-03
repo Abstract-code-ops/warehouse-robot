@@ -1,0 +1,68 @@
+{
+  "layout": {
+    "direction": "row",
+    "first": {
+      "direction": "column",
+      "first": {
+        "type": "panel",
+        "id": "3D!panel-3d"
+      },
+      "second": {
+        "type": "panel",
+        "id": "Plot!panel-plot"
+      }
+    },
+    "second": {
+      "direction": "column",
+      "first": {
+        "type": "panel",
+        "id": "Image!panel-image"
+      },
+      "second": {
+        "type": "panel",
+        "id": "RawMessages!panel-raw"
+      }
+    }
+  },
+  "configById": {
+    "3D!panel-3d": {
+      "title": "Warehouse Navigation 3D",
+      "topics": [
+        {"name": "/tf", "visible": true},
+        {"name": "/tf_static", "visible": true},
+        {"name": "/robot_description", "visible": true},
+        {"name": "/map", "visible": true},
+        {"name": "/global_costmap/costmap", "visible": true},
+        {"name": "/global_costmap/published_footprint", "visible": true},
+        {"name": "/local_costmap/costmap", "visible": true},
+        {"name": "/local_costmap/published_footprint", "visible": true},
+        {"name": "/plan", "visible": true},
+        {"name": "/received_global_plan", "visible": true},
+        {"name": "/hmi/slot_markers", "visible": true}
+      ],
+      "followTf": "base_link",
+      "scene": {
+        "enableStats": false,
+        "transforms": true,
+        "labels": true
+      }
+    },
+    "Image!panel-image": {
+      "title": "ArUco Camera",
+      "cameraTopic": "/camera/image_annotated/compressed"
+    },
+    "Plot!panel-plot": {
+      "title": "Velocity Commands",
+      "paths": [
+        {"value": "/cmd_vel.linear.x", "enabled": true, "timestampMethod": "receiveTime"},
+        {"value": "/cmd_vel.angular.z", "enabled": true, "timestampMethod": "receiveTime"}
+      ],
+      "showLegend": true,
+      "xAxisVal": "timestamp"
+    },
+    "RawMessages!panel-raw": {
+      "title": "Mission Status",
+      "topicPath": "/hmi/mission_status"
+    }
+  }
+}

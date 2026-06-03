@@ -1,0 +1,43 @@
+foxglove_bridge:
+  ros__parameters:
+    # 500 MB send buffer — prevents disconnect on busy topics
+    send_buffer_limit: 500000000
+    max_qos_depth: 50
+    use_sim_time: true
+    # Low-bandwidth profile: keep only high-value topics for monitoring/debug.
+    topic_whitelist:
+      - ^/scan$
+      - ^/tf$
+      - ^/tf_static$
+      - ^/camera/image_annotated/compressed$
+      - ^/camera/depth/color/points$
+      - ^/camera/detected_markers$
+      - ^/odom.*
+      - ^/robot_description$
+      - ^/cmd_vel$
+      - ^/joint_states$
+      - ^/imu.*
+      - ^/clock$
+      - ^/map$
+      - ^/initialpose$
+      - ^/goal_pose$
+      - ^/.*goal.*$
+      - ^/global_costmap/costmap$
+      - ^/global_costmap/costmap_raw$
+      - ^/global_costmap/published_footprint$
+      - ^/local_costmap/costmap$
+      - ^/local_costmap/costmap_raw$
+      - ^/local_costmap/published_footprint$
+      - ^/.*plan$
+      - ^/received_global_plan$
+      - ^/.*path$
+      - ^/.*status$
+      - ^/hmi/.*
+      - ^/task_request.*
+      - ^/inventory/.*
+      - ^/scan/.*
+      - ^/robot/.*
+      - ^/products/registry$
+      - ^/operator.*
+      - ^/diagnostics$
+      - ^/debug/.*$

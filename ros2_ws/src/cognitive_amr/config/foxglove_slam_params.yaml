@@ -1,0 +1,15 @@
+foxglove_bridge:
+  ros__parameters:
+    max_qos_depth: 50
+    use_sim_time: true
+    # Low-bandwidth profile: keep only high-value topics for monitoring/debug.
+    topic_whitelist:
+      - ^/scan$
+      - ^/tf$
+      - ^/tf_static$
+      - ^/odom.*
+      - ^/robot_description$
+      - ^/cmd_vel$
+      - ^/joint_states$
+      - ^/clock$
+      - ^/map$
